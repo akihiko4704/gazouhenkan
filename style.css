@@ -168,10 +168,12 @@ button:disabled { cursor: not-allowed; opacity: 0.4; }
 .controls-heading { padding-bottom: 23px; border-bottom: 1px solid var(--line); }
 .controls-heading h2 { margin: 8px 0 0; font: 500 19px 'Noto Serif JP', serif; }
 .line-art-control { margin-top: 20px; }
-.line-art-button { width: 100%; min-height: 40px; border: 1px solid #aeb8a3; background: rgba(255, 254, 250, .76); color: #405640; cursor: pointer; font-size: 12px; font-weight: 600; }
+.line-art-button, .monochrome-button { width: 100%; min-height: 40px; border: 1px solid #aeb8a3; background: rgba(255, 254, 250, .76); color: #405640; cursor: pointer; font-size: 12px; font-weight: 600; }
 .line-art-button span { margin-right: 7px; font-size: 16px; vertical-align: -1px; }
-.line-art-button[aria-pressed="true"] { border-color: var(--green-dark); background: var(--green-dark); color: #fffdf5; }
-.line-art-control p { margin: 7px 0 0; color: #858779; font-size: 10px; line-height: 1.6; }
+.line-art-button[aria-pressed="true"], .monochrome-button[aria-pressed="true"] { border-color: var(--green-dark); background: var(--green-dark); color: #fffdf5; }
+.monochrome-button span { margin-right: 7px; font-size: 16px; vertical-align: -1px; }
+.line-art-control p, .monochrome-control p { margin: 7px 0 0; color: #858779; font-size: 10px; line-height: 1.6; }
+.monochrome-control { margin-top: 12px; }
 .mood-fieldset[hidden] { display: none; }
 .mood-fieldset { margin: 24px 0 0; padding: 0; border: 0; }
 .mood-fieldset legend, .control-label { color: #4e584d; font-size: 12px; font-weight: 600; }

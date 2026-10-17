@@ -6,6 +6,7 @@ const compareButton = document.querySelector('#compareButton');
 const maskModeButton = document.querySelector('#maskModeButton');
 const clearMosaicButton = document.querySelector('#clearMosaicButton');
 const lineArtButton = document.querySelector('#lineArtButton');
+const monochromeButton = document.querySelector('#monochromeButton');
 const canvas = document.querySelector('#resultCanvas');
 const context = canvas.getContext('2d', { willReadFrequently: true });
 const dropZone = document.querySelector('#dropZone');
@@ -36,6 +37,7 @@ let currentPreset = 'forest';
 let isComparing = false;
 let isMasking = false;
 let isLineArt = false;
+let isGrayscale = false;
 let mosaicStrokes = [];
 let currentStroke = null;
 let mosaicPixelsCanvas = null;
@@ -70,14 +72,15 @@ strengthInput.addEventListener('input', () => {
 
 lineArtButton.addEventListener('click', () => {
   isLineArt = !isLineArt;
-  lineArtButton.setAttribute('aria-pressed', String(isLineArt));
-  lineArtButton.innerHTML = isLineArt
-    ? '<span aria-hidden="true">◧</span> カラー加工に戻す'
-    : '<span aria-hidden="true">◧</span> 白黒二値線画にする';
-  moodFieldset.hidden = isLineArt;
-  strengthLabel.textContent = isLineArt ? '線の細かさ' : '手描きの風合い';
-  rangeLow.textContent = isLineArt ? '太く少なめ' : 'さりげなく';
-  rangeHigh.textContent = isLineArt ? '細かく多め' : 'しっかり';
+  if (isLineArt) isGrayscale = false;
+  updateImageModeControls();
+  renderImage();
+});
+
+monochromeButton.addEventListener('click', () => {
+  isGrayscale = !isGrayscale;
+  if (isGrayscale) isLineArt = false;
+  updateImageModeControls();
   renderImage();
 });
 
@@ -174,6 +177,7 @@ function loadPhoto(file) {
     downloadButton.disabled = false;
     maskModeButton.disabled = false;
     lineArtButton.disabled = false;
+    monochromeButton.disabled = false;
     brushSizeInput.disabled = false;
     isComparing = false;
     compareButton.setAttribute('aria-pressed', 'false');
@@ -214,6 +218,12 @@ function renderImage() {
     return;
   }
 
+  if (isGrayscale) {
+    processedPixels = createGrayscale(luminance, strength);
+    finishRendering();
+    return;
+  }
+
   for (let y = 0; y < sourceHeight; y++) {
     for (let x = 0; x < sourceWidth; x++) {
       const pixel = y * sourceWidth + x;
@@ -240,6 +250,37 @@ function renderImage() {
 
   processedPixels = output;
   finishRendering();
+}
+
+function updateImageModeControls() {
+  lineArtButton.setAttribute('aria-pressed', String(isLineArt));
+  lineArtButton.innerHTML = isLineArt
+    ? '<span aria-hidden="true">◧</span> カラー加工に戻す'
+    : '<span aria-hidden="true">◧</span> 白黒二値線画にする';
+  monochromeButton.setAttribute('aria-pressed', String(isGrayscale));
+  monochromeButton.innerHTML = isGrayscale
+    ? '<span aria-hidden="true">◐</span> カラー加工に戻す'
+    : '<span aria-hidden="true">◐</span> モノクロ写真にする';
+  moodFieldset.hidden = isLineArt || isGrayscale;
+  strengthLabel.textContent = isLineArt
+    ? '線の細かさ'
+    : isGrayscale ? 'モノクロのコントラスト' : '手描きの風合い';
+  rangeLow.textContent = isLineArt ? '太く少なめ' : isGrayscale ? 'やわらかく' : 'さりげなく';
+  rangeHigh.textContent = isLineArt ? '細かく多め' : isGrayscale ? 'くっきり' : 'しっかり';
+}
+
+function createGrayscale(luminance, strength) {
+  const grayscale = new ImageData(new Uint8ClampedArray(originalPixels.data), sourceWidth, sourceHeight);
+  const contrast = 0.8 + strength * 0.4;
+
+  for (let pixel = 0, offset = 0; pixel < luminance.length; pixel++, offset += 4) {
+    const value = Math.max(0, Math.min(255, Math.round(128 + (luminance[pixel] - 128) * contrast)));
+    grayscale.data[offset] = value;
+    grayscale.data[offset + 1] = value;
+    grayscale.data[offset + 2] = value;
+  }
+
+  return grayscale;
 }
 
 function createBinaryLineArt(luminance, strength) {
