@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f1e8">
+  <title>森灯 | 写真を物語の一枚に</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="wordmark" href="#" aria-label="森灯 ホーム">
+      <span class="wordmark-mark" aria-hidden="true">森</span>
+      <span>森灯<small>PHOTO TO FANTASY</small></span>
+    </a>
+    <div class="topbar-note"><span class="privacy-dot"></span>画像はこの端末内で処理されます</div>
+  </header>
+
+  <main class="app-shell">
+    <section class="studio" aria-label="画像プレビュー">
+      <div class="studio-toolbar">
+        <div class="file-meta">
+          <span class="eyebrow">YOUR CANVAS</span>
+          <span class="file-name" id="fileName">新しい物語をはじめる</span>
+        </div>
+        <button class="text-button" id="compareButton" type="button" disabled aria-pressed="false">
+          <span aria-hidden="true">◐</span> 元の写真
+        </button>
+      </div>
+
+      <div class="canvas-stage" id="dropZone">
+        <div class="empty-state" id="emptyState">
+          <div class="sun-mark" aria-hidden="true"><span></span></div>
+          <p class="empty-kicker">A LITTLE MAGIC, FROM YOUR PHOTO</p>
+          <h1>いつもの景色に、<br>物語の光を。</h1>
+          <p class="empty-copy">写真を選ぶと、手描きアニメーション映画のような<br class="desktop-break">色彩と空気感に仕上げます。</p>
+          <button class="primary-button" id="chooseButton" type="button"><span aria-hidden="true">＋</span> 写真を選ぶ</button>
+          <p class="file-hint">JPG・PNG・WebP / 最大 20 MB</p>
+        </div>
+        <canvas id="resultCanvas" aria-label="変換後の写真" hidden></canvas>
+        <div class="drop-hint" id="dropHint" aria-hidden="true">ここに写真をドロップ</div>
+      </div>
+
+      <div class="studio-footer">
+        <span id="imageDimensions">キャンバスの準備ができています</span>
+        <button class="quiet-button" id="changePhotoButton" type="button" hidden>写真を変更</button>
+      </div>
+    </section>
+
+    <aside class="controls" aria-label="変換設定">
+      <div class="controls-heading">
+        <span class="eyebrow">THE ART ROOM</span>
+        <h2>仕上がりをととのえる</h2>
+      </div>
+
+      <div class="line-art-control">
+        <button class="line-art-button" id="lineArtButton" type="button" disabled aria-pressed="false">
+          <span aria-hidden="true">◧</span> 白黒二値線画にする
+        </button>
+        <p>写真の輪郭を黒線で抽出し、白地に仕上げます。</p>
+      </div>
+
+      <fieldset class="mood-fieldset">
+        <legend>光と空気</legend>
+        <div class="mood-list">
+          <button class="mood-option is-selected" type="button" data-preset="forest" aria-pressed="true">
+            <span class="mood-swatch swatch-forest" aria-hidden="true"></span>
+            <span><strong>木漏れ日</strong><small>若葉と、やわらかな光</small></span>
+            <span class="option-check" aria-hidden="true">✓</span>
+          </button>
+          <button class="mood-option" type="button" data-preset="dusk" aria-pressed="false">
+            <span class="mood-swatch swatch-dusk" aria-hidden="true"></span>
+            <span><strong>夕暮れ</strong><small>琥珀色に染まる空</small></span>
+            <span class="option-check" aria-hidden="true">✓</span>
+          </button>
+          <button class="mood-option" type="button" data-preset="rain" aria-pressed="false">
+            <span class="mood-swatch swatch-rain" aria-hidden="true"></span>
+            <span><strong>雨あがり</strong><small>澄んだ青と、みずみずしさ</small></span>
+            <span class="option-check" aria-hidden="true">✓</span>
+          </button>
+        </div>
+      </fieldset>
+
+      <div class="strength-control">
+        <div class="control-label"><label id="strengthLabel" for="strength">手描きの風合い</label><output id="strengthValue" for="strength">68%</output></div>
+        <input id="strength" type="range" min="0" max="100" value="68">
+        <div class="range-ends"><span id="rangeLow">さりげなく</span><span id="rangeHigh">しっかり</span></div>
+      </div>
+
+      <fieldset class="privacy-fieldset">
+        <legend>匿名化モザイク</legend>
+        <p>顔・髪型・服装など、識別につながる部分を塗って隠せます。</p>
+        <div class="privacy-actions">
+          <button class="mask-button" id="maskModeButton" type="button" disabled aria-pressed="false">
+            <span aria-hidden="true">◉</span> モザイクを塗る
+          </button>
+          <button class="clear-mask-button" id="clearMosaicButton" type="button" disabled>消去</button>
+        </div>
+        <div class="brush-control">
+          <div class="control-label"><label for="brushSize">ブラシの大きさ</label><output id="brushSizeValue" for="brushSize">44px</output></div>
+          <input id="brushSize" type="range" min="20" max="100" value="44" disabled>
+        </div>
+      </fieldset>
+
+      <div class="controls-bottom">
+        <p class="local-note"><span aria-hidden="true">✳</span> 写真は端末内で変換されます。匿名化は完全保証ではありません。</p>
+        <button class="download-button" id="downloadButton" type="button" disabled>
+          <span aria-hidden="true">↓</span> 画像を保存
+        </button>
+        <p class="format-note">PNG形式で保存</p>
+      </div>
+    </aside>
+  </main>
+
+  <input id="fileInput" type="file" accept="image/jpeg,image/png,image/webp" hidden>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
